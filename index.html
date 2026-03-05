@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drew's Judo Knowledge™ — Orange Belt Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,500;1,300&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold: #f5c518;
+      --neon: #39ff14;
+      --red: #ff2244;
+      --blue: #00d4ff;
+      --bg: #070707;
+      --card: #0f0f0f;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: #ddd;
+      font-family: 'DM Mono', monospace;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+      pointer-events: none; z-index: 9999;
+    }
+
+    /* ── ALERT ── */
+    .alert-bar {
+      background: var(--red); color: #fff;
+      text-align: center; font-size: 0.7rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 0.5rem; position: relative; z-index: 100;
+      animation: pulse-bar 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-bar { 0%,100%{background:var(--red)} 50%{background:#cc0022} }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 2rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 40%, rgba(245,197,24,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 15% 80%, rgba(0,212,255,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 10%, rgba(255,34,68,0.04) 0%, transparent 60%);
+    }
+
+    /* Judogi pattern background */
+    .bg-pattern {
+      position: absolute; inset: 0;
+      opacity: 0.03; pointer-events: none;
+      background-image:
+        repeating-linear-gradient(45deg, var(--gold) 0px, var(--gold) 1px, transparent 1px, transparent 40px),
+        repeating-linear-gradient(-45deg, var(--gold) 0px, var(--gold) 1px, transparent 1px, transparent 40px);
+    }
+
+    .badge-row {
+      display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 1.5rem; animation: fadeDown 0.6s ease both; position: relative; z-index: 2;
+    }
+    .badge {
+      display: inline-block; font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 0.3em 0.9em; border-radius: 2px;
+    }
+    .badge-green { background: var(--neon); color: #000; }
+    .badge-gold  { background: var(--gold); color: #000; }
+    .badge-blue  { background: var(--blue); color: #000; }
+    .badge-red   { background: var(--red);  color: #fff; }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 14vw, 12rem);
+      line-height: 0.88; color: var(--gold);
+      text-shadow: 0 0 60px rgba(245,197,24,0.55), 0 0 120px rgba(245,197,24,0.2), 5px 5px 0 #3a2d00;
+      animation: fadeDown 0.8s 0.1s ease both, flicker 7s 2s ease-in-out infinite;
+      position: relative; z-index: 2;
+    }
+    @keyframes flicker { 0%,94%,96%,100%{opacity:1} 95%{opacity:0.6} 95.5%{opacity:1} }
+
+    .hero-sub {
+      font-family: 'Playfair Display', serif;
+      font-style: italic; font-weight: 900;
+      font-size: clamp(1rem, 2.5vw, 1.8rem);
+      color: #bbb; margin-top: 0.6rem;
+      animation: fadeDown 0.8s 0.3s ease both;
+      position: relative; z-index: 2;
+    }
+    .hero-sub em { color: var(--neon); font-style: normal; }
+
+    /* Belt display */
+    .belt-display {
+      display: flex; gap: 0.6rem; align-items: center; justify-content: center;
+      margin: 2.5rem 0 1.5rem;
+      animation: fadeDown 0.8s 0.5s ease both;
+      position: relative; z-index: 2;
+    }
+    .belt {
+      height: 18px; border-radius: 2px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.5);
+      transition: transform 0.3s;
+    }
+    .belt:hover { transform: scaleY(1.4); }
+    .belt-white  { width: 60px; background: #e8e8e8; }
+    .belt-yellow { width: 60px; background: #f5d800; box-shadow: 0 0 8px rgba(245,216,0,0.4); }
+    .belt-orange { width: 60px; background: #ff8c00; box-shadow: 0 0 8px rgba(255,140,0,0.4); }
+    .belt-green  { width: 60px; background: #2ecc40; box-shadow: 0 0 8px rgba(46,204,64,0.4); }
+    .belt-blue   { width: 60px; background: #0074d9; box-shadow: 0 0 8px rgba(0,116,217,0.4); }
+    .belt-brown  { width: 60px; background: #8b4513; box-shadow: 0 0 8px rgba(139,69,19,0.4); }
+    .belt-black  { width: 90px; height: 22px; background: #111; border: 1px solid #333; box-shadow: 0 0 16px rgba(245,197,24,0.3); }
+
+    .belt-label {
+      font-size: 0.55rem; color: #333; text-align: center; margin-top: 0.4rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .belt-col { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+
+    .disclaimer {
+      font-size: 0.58rem; color: #2e2e2e; text-align: center;
+      font-style: italic; max-width: 480px; margin: 0 auto 1rem;
+      line-height: 1.9; animation: fadeDown 0.8s 0.7s ease both;
+      position: relative; z-index: 2;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: #1a1a00; border: 1px solid #1a1a00;
+      margin: 0 auto 1.5rem; max-width: 850px; width: 92%;
+    }
+    .stat { background: var(--card); padding: 1.6rem 0.8rem; text-align: center; transition: background 0.3s; }
+    .stat:hover { background: #141400; }
+    .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem; color: var(--gold); line-height: 1; display: block; text-shadow: 0 0 20px rgba(245,197,24,0.4); }
+    .stat-label { font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; color: #666; margin-top: 0.3rem; display: block; }
+
+    /* ── TICKER ── */
+    .ticker-wrap { overflow: hidden; background: var(--gold); color: #000; padding: 0.55rem 0; margin-bottom: 4rem; white-space: nowrap; }
+    .ticker { display: inline-block; animation: ticker 25s linear infinite; font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.18em; }
+    @keyframes ticker { from{transform:translateX(100vw)} to{transform:translateX(-100%)} }
+
+    /* ── SECTION ── */
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 6vw, 4rem); letter-spacing: 0.05em; text-align: center; color: #fff; margin-bottom: 0.2rem; }
+    .section-title span { color: var(--gold); }
+    .section-sub { text-align: center; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: #444; margin-bottom: 3rem; font-style: italic; }
+
+    /* ── CARDS ── */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1150px; margin: 0 auto 5rem; padding: 0 1.5rem; }
+    .card { background: var(--card); border: 1px solid #1a1a00; padding: 2rem; position: relative; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--gold), var(--neon)); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(245,197,24,0.1); border-color: #2a2a00; }
+    .card:hover::before { transform: scaleX(1); }
+
+    .card-rank {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      color: #333; text-transform: uppercase; margin-bottom: 0.4rem;
+    }
+    .card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 0.5rem; }
+    .card p { font-size: 0.76rem; line-height: 1.8; color: #777; }
+    .card .footnote { font-size: 0.6rem; color: #383838; margin-top: 0.6rem; font-style: italic; }
+
+    .confidence { margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .bar { flex: 1; height: 3px; background: #1a1a1a; border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 2px; animation: grow 1.5s 0.5s ease both; }
+    .bar-fill.gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+    .bar-fill.neon { background: var(--neon); box-shadow: 0 0 6px var(--neon); }
+    .bar-fill.red  { background: var(--red);  box-shadow: 0 0 6px var(--red); }
+    .bar-fill.blue { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+    @keyframes grow { from{width:0} }
+    .bar-label { font-size: 0.58rem; color: #444; letter-spacing: 0.08em; white-space: nowrap; }
+
+    /* ── QUOTES ── */
+    .quotes-section { max-width: 900px; margin: 0 auto 5rem; padding: 0 1.5rem; }
+    .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .quote-card { background: var(--card); border: 1px solid #1a1a00; padding: 1.5rem; position: relative; }
+    .quote-card::before { content: '"'; font-family: 'Playfair Display', serif; font-size: 5rem; color: var(--gold); opacity: 0.1; position: absolute; top: -0.5rem; left: 0.8rem; line-height: 1; pointer-events: none; }
+    .quote-text { font-size: 0.78rem; line-height: 1.8; color: #888; font-style: italic; }
+    .quote-source { font-size: 0.6rem; color: #555; margin-top: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .quote-source span { color: var(--gold); }
+
+    /* ── TERMINAL ── */
+    .terminal-wrap { max-width: 720px; margin: 0 auto 5rem; padding: 0 1.5rem; }
+    .terminal { background: #040404; border: 1px solid #1a1a00; border-radius: 4px; overflow: hidden; box-shadow: 0 0 50px rgba(245,197,24,0.07); }
+    .term-bar { background: #0e0e0e; padding: 0.6rem 1rem; display: flex; gap: 0.4rem; align-items: center; border-bottom: 1px solid #1a1a00; }
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot-r{background:#ff5f56}.dot-y{background:#ffbd2e}.dot-g{background:#27c93f}
+    .term-title { font-size: 0.62rem; color: #333; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 auto; }
+    .term-body { padding: 1.5rem; font-size: 0.77rem; line-height: 2.1; color: #555; }
+    .term-line { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .prompt{color:var(--neon);flex-shrink:0}
+    .t-gold{color:var(--gold)}.t-red{color:var(--red)}.t-blue{color:var(--blue)}.t-neon{color:var(--neon)}
+    .cursor { display: inline-block; width: 8px; height: 1em; background: var(--gold); animation: blink-c 1s step-end infinite; vertical-align: text-bottom; }
+    @keyframes blink-c { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── PROGRESS ── */
+    .progress-section { max-width: 750px; margin: 0 auto 5rem; padding: 0 1.5rem; }
+    .progress-title { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.15em; color: #333; text-transform: uppercase; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+    .progress-title::before,.progress-title::after{content:'';flex:1;height:1px;background:#1a1a00}
+    .progress-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .p-label { font-size: 0.68rem; letter-spacing: 0.08em; color: #666; min-width: 220px; }
+    .p-bar { flex: 1; height: 6px; background: #111; border-radius: 3px; overflow: hidden; }
+    .p-fill { height: 100%; border-radius: 3px; animation: grow 2s ease both; }
+    .p-val { font-size: 0.65rem; color: #444; min-width: 40px; text-align: right; }
+
+    /* ── FLOATERS ── */
+    .floaters { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+    .floater { position: absolute; opacity: 0; font-family: 'Bebas Neue', sans-serif; color: var(--gold); font-size: 0.7rem; letter-spacing: 0.15em; animation: float-up linear infinite; }
+    @keyframes float-up { 0%{transform:translateY(110vh);opacity:0} 10%{opacity:0.06} 90%{opacity:0.06} 100%{transform:translateY(-10vh);opacity:0} }
+
+    /* ── FOOTER ── */
+    footer { text-align: center; padding: 3rem 1rem; border-top: 1px solid #111; font-size: 0.62rem; color: #2a2a2a; letter-spacing: 0.12em; text-transform: uppercase; line-height: 2; }
+    footer span { color: var(--gold); }
+
+    /* ── UTILS ── */
+    .reveal { opacity: 0; transform: translateY(25px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:none} }
+
+    @media(max-width:650px) {
+      .stats{grid-template-columns:1fr 1fr}
+      .quote-grid{grid-template-columns:1fr}
+      .p-label{min-width:140px;font-size:0.6rem}
+      .belt-display{gap:0.4rem}
+      .belt,.belt-black{width:42px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="floaters" id="floaters"></div>
+
+<div class="alert-bar">WARNING: ORANGE BELT ON THE PREMISES — SIGNIFICANTLY ABOVE AVERAGE, STATISTICALLY SPEAKING</div>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="bg-pattern"></div>
+
+  <div class="badge-row">
+    <span class="badge badge-gold">Orange Belt — Officially Official</span>
+    <span class="badge badge-green">Genuinely Getting Better</span>
+    <span class="badge badge-blue">Local Tournament Veteran</span>
+    <span class="badge badge-red">Dangerous For His Level</span>
+  </div>
+
+  <h1>Drew's<br>Judo<br>Knowledge</h1>
+  <p class="hero-sub">Widely regarded as <em>a serious work in progress.</em></p>
+
+  <div class="belt-display">
+    <div class="belt-col"><div class="belt belt-white"></div><div class="belt-label">White</div></div>
+    <div class="belt-col"><div class="belt belt-yellow"></div><div class="belt-label">Yellow</div></div>
+    <div class="belt-col" style="transform:scale(1.25);position:relative"><div class="belt belt-orange"></div><div class="belt-label" style="color:var(--gold)">Drew</div></div>
+    <div class="belt-col" style="opacity:0.25"><div class="belt belt-green"></div><div class="belt-label">Green</div></div>
+    <div class="belt-col" style="opacity:0.25"><div class="belt belt-blue"></div><div class="belt-label">Blue</div></div>
+    <div class="belt-col" style="opacity:0.25"><div class="belt belt-brown"></div><div class="belt-label">Brown</div></div>
+    <div class="belt-col" style="opacity:0.25"><div class="belt belt-black"></div><div class="belt-label">Someday</div></div>
+  </div>
+
+  <p class="disclaimer">
+    * Orange belt, which is genuinely respectable and represents real commitment.
+    † Has competed in local tournaments, which most people never do, and that counts for something.
+    ‡ Currently on a trajectory that concerns people who have been doing this longer.
+    § This website is a joke. Drew is not.
+  </p>
+</section>
+
+<!-- STATS -->
+<div class="stats reveal">
+  <div class="stat">
+    <span class="stat-num">OBI</span>
+    <span class="stat-label">Belt Color (Orange)</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" data-target="5">0</span>
+    <span class="stat-label">Belt Ranks Earned</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" data-target="4">0</span>
+    <span class="stat-label">Belts Remaining*</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" data-target="0">0</span>
+    <span class="stat-label">Intentions to Quit†</span>
+  </div>
+</div>
+<p style="text-align:center;font-size:0.55rem;color:#282828;margin-bottom:3rem;font-style:italic;">*green, blue, brown, black — each progressively harder and further away &nbsp;|&nbsp; †this is actually the most impressive stat on the page</p>
+
+<div class="ticker-wrap">
+  <span class="ticker">
+    IPPON EVERY TIME &nbsp;★&nbsp; KODOKAN CALLED, LINE WAS BUSY &nbsp;★&nbsp; GRAVITY WORKS FOR HIM SPECIFICALLY &nbsp;★&nbsp; THE MAT FEARS HIM &nbsp;★&nbsp; NEVER BEEN THROWN &nbsp;★&nbsp; JIGORO KANO WOULD HAVE QUESTIONS &nbsp;★&nbsp; GRIP STRENGTH: CLASSIFIED &nbsp;★&nbsp; THROWS FIRST, ASKS QUESTIONS NEVER &nbsp;★&nbsp; IPPON EVERY TIME &nbsp;★&nbsp;
+  </span>
+</div>
+
+<!-- CARDS -->
+<p class="section-title reveal"><span>Core</span> Techniques</p>
+<p class="section-sub reveal">Peer-reviewed by Drew. Graded by Drew. Contested by everyone he has thrown.</p>
+
+<div class="cards">
+
+  <div class="card reveal">
+    <div class="card-rank">Nage-waza — Throwing Techniques</div>
+    <h3>O-soto-gari</h3>
+    <p>Executes this throw with a confidence that suggests he invented it. He did not. He has, however, improved upon it significantly, and Jigoro Kano is simply unavailable for comment.</p>
+    <p class="footnote">* The original technique has been renamed internally as "the lesser version."</p>
+    <div class="confidence">
+      <span class="bar-label">Mastery</span>
+      <div class="bar"><div class="bar-fill gold" style="width:100%"></div></div>
+      <span class="bar-label">100%</span>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-rank">Nage-waza — Throwing Techniques</div>
+    <h3>Seoi-nage</h3>
+    <p>The shoulder throw. Clean, efficient, and performed with a deeply unsettling calm. Opponents have described the experience as "brief" and "confusing." Referees describe it as textbook.</p>
+    <p class="footnote">* Has been performed in street shoes. Still counts.</p>
+    <div class="confidence">
+      <div class="bar"><div class="bar-fill neon" style="width:97%"></div></div>
+      <span class="bar-label">97%</span>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-rank">Katame-waza — Grappling Techniques</div>
+    <h3>Osae-komi-waza</h3>
+    <p>Pins with such authority that opponents have reportedly questioned their own career choices during the hold. Average hold duration: however long he feels like it. Referee discretion: irrelevant.</p>
+    <p class="footnote">* One opponent asked to be held down longer. Denied.</p>
+    <div class="confidence">
+      <div class="bar"><div class="bar-fill gold" style="width:99%"></div></div>
+      <span class="bar-label">99%</span>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-rank">Katame-waza — Grappling Techniques</div>
+    <h3>Shime-waza</h3>
+    <p>Strangulation techniques. Effective. Technically proficient. Performed with the quiet focus of someone who has read every book on the subject and retained all of it. You tap. That's it.</p>
+    <p class="footnote">* The IJF has requested he "tone it down." He is reviewing the request.</p>
+    <div class="confidence">
+      <div class="bar"><div class="bar-fill red" style="width:95%"></div></div>
+      <span class="bar-label">95%</span>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-rank">Randori — Free Practice</div>
+    <h3>Randori Performance</h3>
+    <p>Goes into randori as a formality. Comes out with data. Opponents come out with an improved understanding of Newton's laws and a strong desire to take up swimming instead.</p>
+    <p class="footnote">* Win rate: not tracked. Losses: not applicable.</p>
+    <div class="confidence">
+      <div class="bar"><div class="bar-fill blue" style="width:100%"></div></div>
+      <span class="bar-label">MAX</span>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-rank">Shiai — Competition</div>
+    <h3>Tournament Record</h3>
+    <p>Competes with the demeanor of a man who has already seen how it ends. He has. It ends in ippon. It always ends in ippon. The scoreboard is updated as a formality.</p>
+    <p class="footnote">* Has thanked opponents "for the opportunity to demonstrate." Genuinely meant it.</p>
+    <div class="confidence">
+      <div class="bar"><div class="bar-fill gold" style="width:100%"></div></div>
+      <span class="bar-label">Undefeated*</span>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-rank">Theoretical Knowledge</div>
+    <h3>Kodokan Canon</h3>
+    <p>Has read the complete Kodokan Judo textbook. Disagreed with two sections. Left margin notes. The notes were more thorough than the original text. The publisher has been informed.</p>
+    <p class="footnote">* Currently annotating the second edition. It did not ask to be annotated.</p>
+    <div class="confidence">
+      <div class="bar"><div class="bar-fill neon" style="width:98%"></div></div>
+      <span class="bar-label">98%</span>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-rank">Biomechanics</div>
+    <h3>Kuzushi</h3>
+    <p>The art of breaking balance. Drew has elevated this to something that can only be described as physics-adjacent. Opponents lose their balance before he has touched them. Researchers are concerned.</p>
+    <p class="footnote">* Three PhDs are currently writing about this. He is not helping them.</p>
+    <div class="confidence">
+      <div class="bar"><div class="bar-fill gold" style="width:96%"></div></div>
+      <span class="bar-label">96%</span>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-rank">Etiquette & Philosophy</div>
+    <h3>Judo Philosophy</h3>
+    <p>"Maximum efficiency, minimum effort." Drew has optimized this further. It is now "maximum efficiency, negligible effort." He bows correctly at all times. He is not humble about his bowing.</p>
+    <p class="footnote">* Has corrected a sensei's bow. Once. The sensei agreed, which made it worse.</p>
+    <div class="confidence">
+      <div class="bar"><div class="bar-fill blue" style="width:91%"></div></div>
+      <span class="bar-label">91%</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- QUOTES -->
+<p class="section-title reveal">What <span>Opponents</span> Say</p>
+<p class="section-sub reveal">Collected post-match. Some while still on the mat.</p>
+
+<div class="quotes-section reveal">
+  <div class="quote-grid">
+    <div class="quote-card">
+      <p class="quote-text">I saw him grip my collar and I just knew. I don't know how I knew. I was already on the floor before I could process what was happening. I'm taking up chess.</p>
+      <p class="quote-source">— <span>Former Opponent</span>, Currently Retired</p>
+    </div>
+    <div class="quote-card">
+      <p class="quote-text">His kuzushi is not normal. I've been doing judo for fifteen years. He broke my balance by looking at me. The physics department has been contacted.</p>
+      <p class="quote-source">— <span>Dojo Member</span>, Brown Belt (Former)</p>
+    </div>
+    <div class="quote-card">
+      <p class="quote-text">I had a game plan. I had studied footage. I had trained specifically for this match. He threw me in four seconds. The game plan is under review.</p>
+      <p class="quote-source">— <span>Competitive Judoka</span>, Reconsidering Career</p>
+    </div>
+    <div class="quote-card">
+      <p class="quote-text">He corrected my footwork mid-match. While throwing me. The correction was accurate. I landed correctly. I don't know how to feel about that.</p>
+      <p class="quote-source">— <span>Sparring Partner</span>, Somehow Still Shows Up</p>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<p class="section-title reveal">Knowledge <span>Metrics</span></p>
+<p class="section-sub reveal">Live readout. Updated in real time. Results independently unverified.</p>
+
+<div class="progress-section reveal">
+  <p class="progress-title">System Diagnostics</p>
+  <div class="progress-item">
+    <span class="p-label">Throwing Technique Mastery</span>
+    <div class="p-bar"><div class="p-fill" style="width:100%;background:var(--gold);box-shadow:0 0 8px var(--gold)"></div></div>
+    <span class="p-val t-gold">MAX</span>
+  </div>
+  <div class="progress-item">
+    <span class="p-label">Humility on the Mat</span>
+    <div class="p-bar"><div class="p-fill" style="width:11%;background:var(--red);box-shadow:0 0 8px var(--red)"></div></div>
+    <span class="p-val t-red">11%</span>
+  </div>
+  <div class="progress-item">
+    <span class="p-label">Respect for Opponents</span>
+    <div class="p-bar"><div class="p-fill" style="width:60%;background:var(--blue);box-shadow:0 0 8px var(--blue)"></div></div>
+    <span class="p-val t-blue">60%</span>
+  </div>
+  <div class="progress-item">
+    <span class="p-label">Things Left To Learn</span>
+    <div class="p-bar"><div class="p-fill" style="width:2%;background:var(--neon);box-shadow:0 0 8px var(--neon)"></div></div>
+    <span class="p-val t-neon">2%*</span>
+  </div>
+  <div class="progress-item">
+    <span class="p-label">Times Tapped Out</span>
+    <div class="p-bar"><div class="p-fill" style="width:0%;background:var(--red)"></div></div>
+    <span class="p-val t-red">0%†</span>
+  </div>
+  <div class="progress-item">
+    <span class="p-label">Unsolicited Technique Advice Given</span>
+    <div class="p-bar"><div class="p-fill" style="width:100%;background:var(--gold);box-shadow:0 0 8px var(--gold)"></div></div>
+    <span class="p-val t-gold">MAX</span>
+  </div>
+</div>
+<p style="text-align:center;font-size:0.55rem;color:#222;margin:-3rem auto 5rem;font-style:italic;max-width:500px">
+  *believed to be two obscure Korean techniques and one move he invented &nbsp;|&nbsp; †the mat begs to differ
+</p>
+
+<!-- TERMINAL -->
+<div class="terminal-wrap reveal">
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <span class="term-title">judo_knowledge.exe — diagnostic v9.9.9</span>
+    </div>
+    <div class="term-body">
+      <div class="term-line"><span class="prompt">$</span><span class="t-gold"> sudo assess_judoka --subject="drew" --be-honest</span></div>
+      <div class="term-line"><span style="color:#333">▶ Initializing Drew's Judo Knowledge Base™...</span></div>
+      <div class="term-line"><span class="t-gold">▶ Technique library: 67 throws loaded. 4 invented. 1 unnamed.</span></div>
+      <div class="term-line"><span style="color:#444">▶ Scanning competition record... ippon... ippon... ippon... ippon...</span></div>
+      <div class="term-line"><span style="color:#444">▶ Scanning for losses... no results found. Expanding search parameters...</span></div>
+      <div class="term-line"><span class="t-red">▶ ERROR: loss_log.txt is empty. File appears to have never been written to.</span></div>
+      <div class="term-line"><span style="color:#444">▶ Loading humility_module.exe...</span></div>
+      <div class="term-line"><span class="t-blue">▶ ERROR: humility_module.exe not found. Last known location: unknown.</span></div>
+      <div class="term-line"><span class="t-red">⚠ WARNING: unsolicited_advice.exe is running continuously in background</span></div>
+      <div class="term-line"><span class="t-red">⚠ WARNING: kuzushi radius exceeds safe operating distance (currently 2.3 metres)</span></div>
+      <div class="term-line"><span class="t-red">⚠ WARNING: opponent_feedback module reports consistent theme — "it happened fast"</span></div>
+      <div class="term-line"><span style="color:#444">▶ Cross-referencing against IJF database... no disciplinary records found.</span></div>
+      <div class="term-line"><span style="color:#333">▶ Note: absence of records is not the same as absence of incidents.</span></div>
+      <div class="term-line"><span class="t-gold">▶ Final verdict: <span class="t-neon">ELITE. UNDEFEATED. TECHNICALLY FLAWLESS. ALSO A LOT.</span></span></div>
+      <div class="term-line"><span style="color:#333">▶ The mat has been informed. The mat is ready.</span></div>
+      <div class="term-line"><span class="prompt">$</span><span class="cursor"></span></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© Drew's Judo Knowledge Base™ &nbsp;|&nbsp; <span>All techniques self-assessed and self-notarized</span></p>
+  <p>Peer review: pending (peers are still getting up off the mat) &nbsp;|&nbsp; No judogi were harmed in the making of this website</p>
+  <p>This site is not responsible for any injuries, shattered confidence, or sudden interest in swimming it may inspire.</p>
+</footer>
+
+<script>
+  // Floating text words instead of emojis
+  const fl = document.getElementById('floaters');
+  const words = ['IPPON','KUZUSHI','SEOI-NAGE','O-GOSHI','WAZA-ARI','OSOTO','RANDORI','SHIAI'];
+  for(let i = 0; i < 16; i++){
+    const d = document.createElement('div');
+    d.className = 'floater';
+    d.textContent = words[i % words.length];
+    d.style.left = `${Math.random()*100}%`;
+    d.style.animationDuration = `${12 + Math.random()*14}s`;
+    d.style.animationDelay = `${Math.random()*12}s`;
+    fl.appendChild(d);
+  }
+
+  // Counter animation
+  function countUp(el, target, dur=1800){
+    let start = null;
+    (function step(ts){
+      if(!start) start = ts;
+      const p = Math.min((ts-start)/dur, 1);
+      const e = 1 - Math.pow(1-p, 3);
+      el.textContent = Math.floor(e * target).toLocaleString();
+      if(p < 1) requestAnimationFrame(step);
+      else el.textContent = target === 0 ? '0' : target.toLocaleString();
+    })(performance.now());
+  }
+
+  // Intersection Observer
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if(en.isIntersecting){
+        en.target.classList.add('visible');
+        en.target.querySelectorAll('[data-target]').forEach(el => countUp(el, parseInt(el.dataset.target)));
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Parallax
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX/window.innerWidth - 0.5) * 18;
+    const y = (e.clientY/window.innerHeight - 0.5) * 18;
+    const h1 = document.querySelector('.hero h1');
+    if(h1) h1.style.transform = `translate(${x*0.25}px, ${y*0.25}px)`;
+  });
+</script>
+</body>
+</html>
